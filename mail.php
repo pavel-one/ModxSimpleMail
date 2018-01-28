@@ -30,7 +30,11 @@ foreach ( $_POST as $key => $value ) {
 		";
 
 		if ($key != 'phone' && $key != 'name') {
-			$props['data'][$key] = $value;
+			if ($key == 'form_subject') {
+				$props['data']['Форма'] = $value;
+			} else {
+				$props['data'][$key] = $value;
+			}
 		}
 	}
 }
