@@ -11,6 +11,7 @@
 Компонент подтягивает любые поля у формы, с классом **form_ajax_go**. Название поля которое отправится на почту и запишется в админку точно такое же, как и name у инпута, пример рабочей формы:
 
     <form class="form_ajax_go">
+    	<input type="hidden" name="form_subject" value="Тема письма"/>
 		<div>
 		  <label>Как к вам обращаться</label>
 		  <input type="text" name="name">
