@@ -14,8 +14,8 @@ $project_name = $modx->getOption('site_name');
 $form_subject = trim($_POST["form_subject"]);
 
 $props = array(
-    'name' => trim($_POST["name"],
-    'phone' => trim($_POST["phone"],
+    'name' => trim($_POST["name"]),
+    'phone' => trim($_POST["phone"]),
     'createdon' => date('Y-m-d H:i:s'),
     'manager' => 1,
     'status' => 1,
