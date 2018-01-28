@@ -32,12 +32,11 @@ foreach ( $_POST as $key => $value ) {
 		if ($key != 'phone' && $key != 'name') {
 			$props['data'][$key] = $value;
 		}
-		addAdmin($props);
 	}
 }
 
 $message = "<table style='width: 100%;'>$message</table>";
-
+addAdmin($props);
 
 $modx->getService('mail', 'mail.modPHPMailer');
 $modx->mail->set(modMail::MAIL_FROM, $modx->getOption('emailsender'));
