@@ -1,6 +1,5 @@
 <?php
 define('MODX_API_MODE', true);
-
 require_once($_SERVER['DOCUMENT_ROOT'].'/index.php');
 $modx = new modX();
 $modx->initialize('web');
@@ -8,51 +7,66 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($_SERVER['HTTP_X_REQUESTED_WITH'] != 'XMLHttpRequest') {
   	$modx->sendRedirect($modx->makeUrl($modx->getOption('site_start'),'','','full'));
 }
+$pdo = $modx->getService('pdoTools');
 
-$c = true;
+//exit(print_r($_POST));
+
+
 $project_name = $modx->getOption('site_name');
 $form_subject = trim($_POST["form_subject"]);
-
+$from = $modx->getOption('emailsender');
+$to = $modx->getOption('ms2_email_manager');
+$to = str_replace(' ', '', $to);
+$to = explode(',',$to);
+$name = htmlspecialchars(trim($_POST["Имя"]));
+$phone = htmlspecialchars(trim($_POST["Телефон"]));
 $props = array(
-    'name' => trim($_POST["name"]),
-    'phone' => trim($_POST["phone"]),
+    'name' => $name,
+    'phone' => $phone,
     'createdon' => date('Y-m-d H:i:s'),
     'manager' => 1,
     'status' => 1,
 );
-foreach ( $_POST as $key => $value ) {
-	if ( $value != "" && $key != "form_subject" && $key != "null") {
-		$message .= "
-		" . ( ($c = !$c) ? '<tr>':'<tr style="background-color: #f8f8f8;">' ) . "
-			<td style='padding: 10px; border: #e9e9e9 1px solid;'><b>$key</b></td>
-			<td style='padding: 10px; border: #e9e9e9 1px solid;'>$value</td>
-		</tr>
-		";
-
-		if ($key != 'phone' && $key != 'name') {
-			if ($key == 'form_subject') {
-				$props['data']['Форма'] = $value;
-			} else {
-				$props['data'][$key] = $value;
-			}
-		}
-	}
+if ($_POST['form_subject']) {
+	$props['data']['Форма'] = $_POST['form_subject'];
+}
+if ($_POST['upload_file']) {
+	$props['data']['Прикрепленный файл'] = '<a href="'.$_POST['upload_file'].'" target="_blank">ссылка на файл</a>';
 }
 
-$message = "<table style='width: 100%;'>$message</table>";
+/***
+	TO-DO
+-$pdo->getChunk() - передавать массив
+-foreach (array_keys($_POST) as $key => $val), потом if (strpos($key, 'address') !== false) - перебирать пост таким образом
+***/
+if ($name) {
+	$msg['Имя'] = $name;
+}
+if ($phone) {
+	$msg['Телефон'] = $phone;
+}
+foreach ($_POST as $key => $value) {
+	if (strpos($key, 'rec_') !== false) {
+		$key = str_replace('rec_', '', $key);
+		$msg[$key] = htmlspecialchars(trim($value));
+		$props['data'][$key] = htmlspecialchars(trim($value));
+	}
+}
 addAdmin($props);
 
 $modx->getService('mail', 'mail.modPHPMailer');
-$modx->mail->set(modMail::MAIL_FROM, $modx->getOption('emailsender'));
+$modx->mail->set(modMail::MAIL_FROM, $from);
 $modx->mail->set(modMail::MAIL_FROM_NAME, $project_name);
-$adresss = $modx->getOption('ms2_email_manager');
-$adresss = str_replace(' ', '', $adresss);
-$adresss = explode(',',$adresss);
-foreach ($adresss as $item) {
+foreach ($to as $item) {
   $modx->mail->address('to', $item);
 }
 $modx->mail->set(modMail::MAIL_SUBJECT, $form_subject);
-$modx->mail->set(modMail::MAIL_BODY, $message);
+if ($_POST['upload_file']) {
+	$modx->mail->attach($_SESSION['form_file_path']);
+}
+$modx->mail->set(modMail::MAIL_BODY, $pdo->getChunk('FormMailSent', array(
+	'data' => $msg
+)));
 $modx->mail->setHTML(true);
 if (!$modx->mail->send()) {
     $modx->log(modX::LOG_LEVEL_ERROR,'An error occurred while trying to send the email: '.$modx->mail->mailer->ErrorInfo);
