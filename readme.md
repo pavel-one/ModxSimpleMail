@@ -10,6 +10,8 @@
 4. Смотрим js файл mail.js и копируем к себе изменив методы success
 5. Форме к которой нужно привязать скрипт даем класс **form_ajax_go**
 6. В этой же форме ставим input
+
+
 	<input type="hidden" name="form_subject" value="Тема письма"/>
 он будет отвечать за тему письма
 7. Форма должна иметь input name **Имя** и input name **Телефон** (это не обязательно)
@@ -20,6 +22,7 @@
 
 где после rec_ идет название которое запишется в админку и отправится на почту
 9. Создаем чанк **FormMailSent** с вот таким содержимым:
+
 
 	{if is_array($data)}
 	    {set $count = 1}
@@ -41,9 +44,11 @@
 
 1. Форма должна обязательно иметь input type file:
 
+
 	<input type="file" name="norec">
 
 2. Также она должна иметь скрытое поле upload_file
+
 
 	<input type="hidden" name="upload_file" value="">
 
