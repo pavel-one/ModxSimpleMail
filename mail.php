@@ -7,9 +7,10 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($_SERVER['HTTP_X_REQUESTED_WITH'] != 'XMLHttpRequest') {
   	$modx->sendRedirect($modx->makeUrl($modx->getOption('site_start'),'','','full'));
 }
+/**
+ * @var $pdo pdoTools
+ */
 $pdo = $modx->getService('pdoTools');
-
-//exit(print_r($_POST));
 
 
 $project_name = $modx->getOption('site_name');
@@ -27,18 +28,13 @@ $props = array(
     'manager' => 1,
     'status' => 1,
 );
-if ($_POST['form_subject']) {
-	$props['data']['Форма'] = $_POST['form_subject'];
+if ($form_subject) {
+	$props['data']['Форма'] = $form_subject;
 }
 if ($_POST['upload_file']) {
 	$props['data']['Прикрепленный файл'] = '<a href="'.$_POST['upload_file'].'" target="_blank">ссылка на файл</a>';
 }
 
-/***
-	TO-DO
--$pdo->getChunk() - передавать массив
--foreach (array_keys($_POST) as $key => $val), потом if (strpos($key, 'address') !== false) - перебирать пост таким образом
-***/
 if ($name) {
 	$msg['Имя'] = $name;
 }
