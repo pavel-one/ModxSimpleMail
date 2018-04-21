@@ -11,8 +11,6 @@ if ($_SERVER['HTTP_X_REQUESTED_WITH'] != 'XMLHttpRequest') {
  * @var $pdo pdoTools
  */
 $pdo = $modx->getService('pdoTools');
-
-
 $project_name = $modx->getOption('site_name');
 $form_subject = trim($_POST["form_subject"]);
 $from = $modx->getOption('emailsender');
